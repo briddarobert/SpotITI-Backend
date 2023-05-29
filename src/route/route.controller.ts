@@ -37,7 +37,6 @@ export class RouteController {
   async findOneBySpot(
     @Param('node') node: string,
     @Param('spot') spot: string,
-    @Query('exclude') excludedSpots: string,
   ): Promise<Route> {
     try {
       return await this.routeService.calculateToSpot(+node, +spot);
