@@ -66,7 +66,7 @@ export class LinksController {
   }
 
   /**
-   * Aggiorna un collegamento specifica
+   * Aggiorna un collegamento specifico
    * @param id L'ID del collegamento da aggiornare
    * @param updateLinkDto I dati da aggiornare del collegamento
    * @returns Il collegamento modificato
