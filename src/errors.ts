@@ -34,7 +34,7 @@ export function manageException(e: any): void {
 }
 
 export const notFoundException = new HttpException(
-  "L'entità richiesta non è stato trovata",
+  "L'entità richiesta non è stata trovata",
   HttpStatus.NOT_FOUND,
 );
 
