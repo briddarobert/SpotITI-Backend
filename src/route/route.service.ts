@@ -62,10 +62,28 @@ export class RouteService {
     return route;
   }
 
-  async calculateToCategory(node: number, category: number): Promise<Route> {
+  async calculateToCategory(
+    node: number,
+    category: number,
+    excludedSpots: string[],
+  ): Promise<Route> {
     const spots: Spot[] = (await this.categoriesService.findOne(category))
       .spots;
     let route: Route;
+
+    for (const spotId of excludedSpots) {
+      const spot: Spot = await this.spotsService.findOne(+spotId);
+      spot.category = undefined;
+      spot.nodes = undefined;
+      spot.data = JSON.stringify(spot.data);
+
+      for (let i = 0; i < spots.length; i++) {
+        console.debug(JSON.stringify(spots[i]), JSON.stringify(spot));
+        if (JSON.stringify(spots[i]) == JSON.stringify(spot)) {
+          spots.splice(i, 1);
+        }
+      }
+    }
 
     for (const currentSpot of spots) {
       let currentRoute = await this.calculateToSpot(node, currentSpot.id);

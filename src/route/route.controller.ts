@@ -1,7 +1,7 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { RouteService } from './route.service';
 import { manageException } from 'src/errors';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Route } from './entities/route.entity';
 
 @Controller('route')
@@ -37,6 +37,7 @@ export class RouteController {
   async findOneBySpot(
     @Param('node') node: string,
     @Param('spot') spot: string,
+    @Query('exclude') excludedSpots: string,
   ): Promise<Route> {
     try {
       return await this.routeService.calculateToSpot(+node, +spot);
@@ -51,13 +52,23 @@ export class RouteController {
    * @param spot Categoria desiderata
    * @returns Il percorso da eseguire, rappresentato da un vettore di nodi, assieme alla sua lunghezza
    */
+  @ApiQuery({
+    name: 'exclude',
+    required: false,
+    description: 'Spot da escludere, separati da una virgola (es. `1,3,69`)',
+  })
   @Get(':node/category/:category')
   async findOneByCategory(
     @Param('node') node: string,
     @Param('category') category: string,
+    @Query('exclude') excludedSpots?: string,
   ): Promise<Route> {
     try {
-      return await this.routeService.calculateToCategory(+node, +category);
+      return await this.routeService.calculateToCategory(
+        +node,
+        +category,
+        excludedSpots ? excludedSpots.split(',') : [],
+      );
     } catch (e) {
       manageException(e);
     }
