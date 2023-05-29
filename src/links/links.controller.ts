@@ -53,7 +53,7 @@ export class LinksController {
   @ApiNotFoundResponse({
     description: LinksController.notFoundErrorDescription,
   })
-  @Get(':nodeA/nodeB')
+  @Get(':nodeA/:nodeB')
   async findOne(
     @Param('nodeA') nodeA: string,
     @Param('nodeB') nodeB: string,
