@@ -33,7 +33,14 @@ export class LinksService {
   }
 
   async findOne(nodeA: number, nodeB: number): Promise<Link> {
-    return await this.linksRepository.findOneByOrFail({ nodeA, nodeB });
+    try {
+      return await this.linksRepository.findOneByOrFail({ nodeA, nodeB });
+    } catch {
+      return await this.linksRepository.findOneByOrFail({
+        nodeA: nodeB,
+        nodeB: nodeA,
+      });
+    }
   }
 
   async update(
@@ -41,16 +48,18 @@ export class LinksService {
     nodeB: number,
     updateLinkDto: UpdateLinkDto,
   ): Promise<Link> {
-    await this.linksRepository.update({ nodeA, nodeB }, updateLinkDto); // N.B.: Non viene eseguito alcun controllo per verificare l'esistenza dell'entità da aggiornare
-    return this.linksRepository.findOneByOrFail({
-      nodeA,
-      nodeB,
-    });
+    try {
+      await this.linksRepository.update({ nodeA, nodeB }, updateLinkDto); // N.B.: Non viene eseguito alcun controllo per verificare l'esistenza dell'entità da aggiornare
+    } catch {
+      await this.linksRepository.update(
+        { nodeA: nodeB, nodeB: nodeA },
+        updateLinkDto,
+      ); // N.B.: Non viene eseguito alcun controllo per verificare l'esistenza dell'entità da aggiornare
+    }
+    return this.findOne(nodeA, nodeB);
   }
 
   async remove(nodeA: number, nodeB: number): Promise<void> {
-    this.linksRepository.remove(
-      await this.linksRepository.findOneByOrFail({ nodeA, nodeB }),
-    );
+    this.linksRepository.remove(await this.findOne(nodeA, nodeB));
   }
 }
