@@ -78,7 +78,6 @@ export class RouteService {
       spot.data = JSON.stringify(spot.data);
 
       for (let i = 0; i < spots.length; i++) {
-        console.debug(JSON.stringify(spots[i]), JSON.stringify(spot));
         if (JSON.stringify(spots[i]) == JSON.stringify(spot)) {
           spots.splice(i, 1);
         }
