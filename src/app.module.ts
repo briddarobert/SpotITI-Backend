@@ -8,6 +8,7 @@ import { LinksModule } from './links/links.module';
 import { SpotsModule } from './spots/spots.module';
 import { CategoriesModule } from './categories/categories.module';
 import { RouteModule } from './route/route.module';
+import { FloorplanModule } from './floorplan/floorplan.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { RouteModule } from './route/route.module';
     SpotsModule,
     CategoriesModule,
     RouteModule,
+    FloorplanModule,
   ],
   controllers: [AppController],
   providers: [AppService],
