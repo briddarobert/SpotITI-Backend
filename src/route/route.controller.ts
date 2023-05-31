@@ -8,7 +8,11 @@ import {
 } from '@nestjs/common';
 import { RouteService } from './route.service';
 import { manageException } from 'src/errors';
-import { ApiQuery, ApiTags } from '@nestjs/swagger';
+import {
+  ApiInternalServerErrorResponse,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Route } from './entities/route.entity';
 
 @Controller('route')
@@ -32,6 +36,9 @@ export class RouteController {
     required: false,
     description:
       'Tipi di collegamenti da escludere, separati da una virgola (es. `abc,xyz,foobar`)',
+  })
+  @ApiInternalServerErrorResponse({
+    description: RouteController.noPathFoundException.message,
   })
   @Get(':nodeA/:nodeB')
   async findOne(
@@ -66,6 +73,9 @@ export class RouteController {
     required: false,
     description:
       'Tipi di collegamenti da escludere, separati da una virgola (es. `abc,xyz,foobar`)',
+  })
+  @ApiInternalServerErrorResponse({
+    description: RouteController.noPathFoundException.message,
   })
   @Get(':node/spot/:spot')
   async findOneBySpot(
@@ -105,6 +115,9 @@ export class RouteController {
     required: false,
     description:
       'Tipi di collegamenti da escludere, separati da una virgola (es. `abc,xyz,foobar`)',
+  })
+  @ApiInternalServerErrorResponse({
+    description: RouteController.noPathFoundException.message,
   })
   @Get(':node/category/:category')
   async findOneByCategory(
