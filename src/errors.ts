@@ -24,11 +24,6 @@ export function manageException(e: any): void {
       throw foreignKeyConstraintFailOnCreate;
     }
   }
-  if (e instanceof Error) {
-    if (e.message == 'No path found') {
-      throw noPathFoundException;
-    }
-  }
 
   throw e;
 }
@@ -51,9 +46,4 @@ export const foreignKeyConstraintFailOnCreate = new HttpException(
 export const foreignKeyConstraintFailOnUpdate = new HttpException(
   'Non è possibile modificare questa entità in quanto fa riferimento ad una chiave esterna per cui non si sono verificati tutti i requisiti necessari. Controllare che tutte le entità a qui si fa riferimento non siano collegate ad altre',
   HttpStatus.CONFLICT,
-);
-
-export const noPathFoundException = new HttpException(
-  'Non è possibile calcolare un percorso tra i nodi specificati',
-  HttpStatus.INTERNAL_SERVER_ERROR,
 );

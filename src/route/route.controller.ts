@@ -1,4 +1,11 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  HttpException,
+  HttpStatus,
+  Param,
+  Query,
+} from '@nestjs/common';
 import { RouteService } from './route.service';
 import { manageException } from 'src/errors';
 import { ApiQuery, ApiTags } from '@nestjs/swagger';
@@ -8,6 +15,11 @@ import { Route } from './entities/route.entity';
 @ApiTags('Percorsi')
 export class RouteController {
   constructor(private readonly routeService: RouteService) {}
+
+  static noPathFoundException = new HttpException(
+    'Non è possibile calcolare un percorso tra i nodi specificati',
+    HttpStatus.INTERNAL_SERVER_ERROR,
+  );
 
   /**
    * Calcola un percorso tra due nodi
@@ -34,6 +46,11 @@ export class RouteController {
         excludedLinkTypes ? excludedLinkTypes.split(',') : [],
       );
     } catch (e) {
+      if (e instanceof Error) {
+        if (e.message == 'No path found') {
+          throw RouteController.noPathFoundException;
+        }
+      }
       manageException(e);
     }
   }
@@ -63,6 +80,11 @@ export class RouteController {
         excludedLinkTypes ? excludedLinkTypes.split(',') : [],
       );
     } catch (e) {
+      if (e instanceof Error) {
+        if (e.message == 'No path found') {
+          throw RouteController.noPathFoundException;
+        }
+      }
       manageException(e);
     }
   }
@@ -99,6 +121,11 @@ export class RouteController {
         excludedLinkTypes ? excludedLinkTypes.split(',') : [],
       );
     } catch (e) {
+      if (e instanceof Error) {
+        if (e.message == 'No path found') {
+          throw RouteController.noPathFoundException;
+        }
+      }
       manageException(e);
     }
   }
