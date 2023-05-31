@@ -20,12 +20,17 @@ export class RouteService {
   async calculate(
     nodeA: number,
     nodeB: number,
+    excludedNodes: number[],
     excludedLinkTypes: string[],
   ): Promise<Route> {
     const allNodes: Node[] = await this.nodesService.findAll();
     const graph: Graph = new Graph();
 
     for (const node of allNodes) {
+      if (excludedNodes.includes(node.id)) {
+        break;
+      }
+
       let neighbors = {};
       for (const link of node.linksWithNodeAsStart) {
         if (!excludedLinkTypes.includes(link.type)) {
@@ -58,6 +63,7 @@ export class RouteService {
   async calculateToSpot(
     node: number,
     spot: number,
+    excludedNodes: number[],
     excludedLinkTypes: string[],
   ): Promise<Route> {
     const nodes: Node[] = (await this.spotsService.findOne(spot)).nodes;
@@ -67,6 +73,7 @@ export class RouteService {
       let currentRoute = await this.calculate(
         node,
         currentNode.id,
+        excludedNodes,
         excludedLinkTypes,
       );
       if (!route || route.lenght < currentRoute.lenght) route = currentRoute;
@@ -81,6 +88,7 @@ export class RouteService {
   async calculateToCategory(
     node: number,
     category: number,
+    excludedNodes: number[],
     excludedSpots: number[],
     excludedLinkTypes: string[],
   ): Promise<Route> {
@@ -105,6 +113,7 @@ export class RouteService {
       let currentRoute = await this.calculateToSpot(
         node,
         currentSpot.id,
+        excludedNodes,
         excludedLinkTypes,
       );
       if (!route || route.lenght < currentRoute.lenght) route = currentRoute;

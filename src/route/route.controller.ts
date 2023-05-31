@@ -50,6 +50,7 @@ export class RouteController {
       return await this.routeService.calculate(
         +nodeA,
         +nodeB,
+        [], // Non avrebbe senso escludere dei nodi quando si cerca un percorso tra due nodi specifici
         excludedLinkTypes ? excludedLinkTypes.split(',') : [],
       );
     } catch (e) {
@@ -69,6 +70,12 @@ export class RouteController {
    * @returns Il percorso da eseguire, rappresentato da un vettore di nodi, assieme alla sua lunghezza
    */
   @ApiQuery({
+    name: 'excludedNodes',
+    required: false,
+    description:
+      'Nodi da escludere, separati da una virgola (es. `333,420,1337`)',
+  })
+  @ApiQuery({
     name: 'excludedLinkTypes',
     required: false,
     description:
@@ -81,12 +88,14 @@ export class RouteController {
   async findOneBySpot(
     @Param('node') node: string,
     @Param('spot') spot: string,
+    @Query('excludedNodes') excludedNodes?: string,
     @Query('excludedLinkTypes') excludedLinkTypes?: string,
   ): Promise<Route> {
     try {
       return await this.routeService.calculateToSpot(
         +node,
         +spot,
+        excludedNodes ? excludedNodes.split(',').map(Number) : [],
         excludedLinkTypes ? excludedLinkTypes.split(',') : [],
       );
     } catch (e) {
@@ -106,6 +115,12 @@ export class RouteController {
    * @returns Il percorso da eseguire, rappresentato da un vettore di nodi, assieme alla sua lunghezza
    */
   @ApiQuery({
+    name: 'excludedNodes',
+    required: false,
+    description:
+      'Nodi da escludere, separati da una virgola (es. `333,420,1337`)',
+  })
+  @ApiQuery({
     name: 'excludedSpots',
     required: false,
     description: 'Spot da escludere, separati da una virgola (es. `1,3,69`)',
@@ -123,6 +138,7 @@ export class RouteController {
   async findOneByCategory(
     @Param('node') node: string,
     @Param('category') category: string,
+    @Query('excludedNodes') excludedNodes?: string,
     @Query('excludedSpots') excludedSpots?: string,
     @Query('excludedLinkTypes') excludedLinkTypes?: string,
   ): Promise<Route> {
@@ -130,6 +146,7 @@ export class RouteController {
       return await this.routeService.calculateToCategory(
         +node,
         +category,
+        excludedNodes ? excludedNodes.split(',').map(Number) : [],
         excludedSpots ? excludedSpots.split(',').map(Number) : [],
         excludedLinkTypes ? excludedLinkTypes.split(',') : [],
       );
