@@ -17,17 +17,25 @@ export class RouteService {
 
   static noPathFoundError = new Error('No path found');
 
-  async calculate(nodeA: number, nodeB: number): Promise<Route> {
+  async calculate(
+    nodeA: number,
+    nodeB: number,
+    excludedLinkTypes: string[],
+  ): Promise<Route> {
     const allNodes: Node[] = await this.nodesService.findAll();
     const graph: Graph = new Graph();
 
     for (const node of allNodes) {
       let neighbors = {};
       for (const link of node.linksWithNodeAsStart) {
-        neighbors[link.nodeB] = link.weight;
+        if (!excludedLinkTypes.includes(link.type)) {
+          neighbors[link.nodeB] = link.weight;
+        }
       }
       for (const link of node.linksWithNodeAsEnd) {
-        neighbors[link.nodeA] = link.weight;
+        if (!excludedLinkTypes.includes(link.type)) {
+          neighbors[link.nodeA] = link.weight;
+        }
       }
 
       graph.addNode(node.id.toString(), neighbors);
@@ -47,12 +55,20 @@ export class RouteService {
     };
   }
 
-  async calculateToSpot(node: number, spot: number): Promise<Route> {
+  async calculateToSpot(
+    node: number,
+    spot: number,
+    excludedLinkTypes: string[],
+  ): Promise<Route> {
     const nodes: Node[] = (await this.spotsService.findOne(spot)).nodes;
     let route: Route;
 
     for (const currentNode of nodes) {
-      let currentRoute = await this.calculate(node, currentNode.id);
+      let currentRoute = await this.calculate(
+        node,
+        currentNode.id,
+        excludedLinkTypes,
+      );
       if (!route || route.lenght < currentRoute.lenght) route = currentRoute;
     }
     if (!route) {
@@ -65,14 +81,15 @@ export class RouteService {
   async calculateToCategory(
     node: number,
     category: number,
-    excludedSpots: string[],
+    excludedSpots: number[],
+    excludedLinkTypes: string[],
   ): Promise<Route> {
     const spots: Spot[] = (await this.categoriesService.findOne(category))
       .spots;
     let route: Route;
 
     for (const spotId of excludedSpots) {
-      const spot: Spot = await this.spotsService.findOne(+spotId);
+      const spot: Spot = await this.spotsService.findOne(spotId);
       spot.category = undefined;
       spot.nodes = undefined;
       spot.data = JSON.stringify(spot.data);
@@ -85,7 +102,11 @@ export class RouteService {
     }
 
     for (const currentSpot of spots) {
-      let currentRoute = await this.calculateToSpot(node, currentSpot.id);
+      let currentRoute = await this.calculateToSpot(
+        node,
+        currentSpot.id,
+        excludedLinkTypes,
+      );
       if (!route || route.lenght < currentRoute.lenght) route = currentRoute;
     }
     if (!route) {

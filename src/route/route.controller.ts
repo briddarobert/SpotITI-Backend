@@ -15,13 +15,24 @@ export class RouteController {
    * @param nodeB Nodo di arrivo
    * @returns Il percorso da eseguire, rappresentato da un vettore di nodi, assieme alla sua lunghezza
    */
+  @ApiQuery({
+    name: 'excludedLinkTypes',
+    required: false,
+    description:
+      'Tipi di collegamenti da escludere, separati da una virgola (es. `abc,xyz,foobar`)',
+  })
   @Get(':nodeA/:nodeB')
   async findOne(
     @Param('nodeA') nodeA: string,
     @Param('nodeB') nodeB: string,
+    @Query('excludedLinkTypes') excludedLinkTypes?: string,
   ): Promise<Route> {
     try {
-      return await this.routeService.calculate(+nodeA, +nodeB);
+      return await this.routeService.calculate(
+        +nodeA,
+        +nodeB,
+        excludedLinkTypes ? excludedLinkTypes.split(',') : [],
+      );
     } catch (e) {
       manageException(e);
     }
@@ -33,13 +44,24 @@ export class RouteController {
    * @param spot Spot desiderato
    * @returns Il percorso da eseguire, rappresentato da un vettore di nodi, assieme alla sua lunghezza
    */
+  @ApiQuery({
+    name: 'excludedLinkTypes',
+    required: false,
+    description:
+      'Tipi di collegamenti da escludere, separati da una virgola (es. `abc,xyz,foobar`)',
+  })
   @Get(':node/spot/:spot')
   async findOneBySpot(
     @Param('node') node: string,
     @Param('spot') spot: string,
+    @Query('excludedLinkTypes') excludedLinkTypes?: string,
   ): Promise<Route> {
     try {
-      return await this.routeService.calculateToSpot(+node, +spot);
+      return await this.routeService.calculateToSpot(
+        +node,
+        +spot,
+        excludedLinkTypes ? excludedLinkTypes.split(',') : [],
+      );
     } catch (e) {
       manageException(e);
     }
@@ -52,21 +74,29 @@ export class RouteController {
    * @returns Il percorso da eseguire, rappresentato da un vettore di nodi, assieme alla sua lunghezza
    */
   @ApiQuery({
-    name: 'exclude',
+    name: 'excludedSpots',
     required: false,
     description: 'Spot da escludere, separati da una virgola (es. `1,3,69`)',
+  })
+  @ApiQuery({
+    name: 'excludedLinkTypes',
+    required: false,
+    description:
+      'Tipi di collegamenti da escludere, separati da una virgola (es. `abc,xyz,foobar`)',
   })
   @Get(':node/category/:category')
   async findOneByCategory(
     @Param('node') node: string,
     @Param('category') category: string,
-    @Query('exclude') excludedSpots?: string,
+    @Query('excludedSpots') excludedSpots?: string,
+    @Query('excludedLinkTypes') excludedLinkTypes?: string,
   ): Promise<Route> {
     try {
       return await this.routeService.calculateToCategory(
         +node,
         +category,
-        excludedSpots ? excludedSpots.split(',') : [],
+        excludedSpots ? excludedSpots.split(',').map(Number) : [],
+        excludedLinkTypes ? excludedLinkTypes.split(',') : [],
       );
     } catch (e) {
       manageException(e);
