@@ -12,7 +12,7 @@ export class FloorplanController {
   constructor(private readonly floorplanService: FloorplanService) {}
 
   /**
-   * Crea una cartina
+   * Crea una piantina
    */
   @Post()
   async create(
@@ -22,7 +22,7 @@ export class FloorplanController {
   }
 
   /**
-   * Aggiorna una cartina
+   * Aggiorna una piantina
    */
   @Patch()
   async update(
@@ -36,7 +36,7 @@ export class FloorplanController {
   }
 
   /**
-   * Reperisce una cartina
+   * Reperisce una piantina
    */
   @Get()
   async findAll(): Promise<Floorplan> {
