@@ -54,8 +54,14 @@ export class RouteService {
       throw RouteService.noPathFoundError;
     }
 
+    let nodeIds = path.path.map(Number);
+    let nodes: Node[] = [];
+    for (const nodeId of nodeIds) {
+      nodes.push(await this.nodesService.findOne(nodeId));
+    }
+
     return {
-      nodes: path.path.map(Number),
+      nodes,
       lenght: path.cost,
     };
   }
