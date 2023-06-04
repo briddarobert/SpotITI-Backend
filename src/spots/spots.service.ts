@@ -94,14 +94,24 @@ export class SpotsService {
       nodes.push(await this.nodesService.findOne(nodeId));
     }
 
+    // await this.spotsRepository.update({ id }, spot); // N.B.: Purtroppo questo non funziona, segue codice per rimediare, abbastanza «brutto». Vedi `https://github.com/typeorm/typeorm/issues/8404#issuecomment-1320199819` ed altri issue per "Cannot query across one-to-many for property [...]"
+
+    const entity = await this.findOne(id);
+
     // Non si può passare direttamente il DTO dato che non è possibile inserire direttamente un oggetto nel database come colonna
     const spot = {
+      ...entity,
       ...updateSpotDto,
       data: JSON.stringify(updateSpotDto.data), // È necessario serializzare questa proprietà (un generico oggetto) in una stringa
-      category: await this.categoriesService.findOne(updateSpotDto.category),
-      nodes,
+      category: updateSpotDto.category
+        ? await this.categoriesService.findOne(updateSpotDto.category)
+        : undefined,
+      nodes: nodes.concat(entity.nodes),
     };
-    await this.spotsRepository.update({ id }, spot); // N.B.: Non viene eseguito alcun controllo per verificare l'esistenza dell'entità da aggiornare
+
+    Object.assign(entity, spot);
+    await this.spotsRepository.save(entity);
+
     return this.spotsRepository.findOneByOrFail({
       id,
     });
