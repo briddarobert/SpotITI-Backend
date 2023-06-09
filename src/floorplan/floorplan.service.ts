@@ -20,7 +20,10 @@ export class FloorplanService {
   }
 
   async find(): Promise<Floorplan> {
-    return await this.floorplanRepository.findOneByOrFail({ id: 1 });
+    let floorplan: Floorplan = await this.floorplanRepository.findOneByOrFail({
+      id: 1,
+    });
+    return { ...floorplan, pixelToMeterRatio: floorplan.pixelToMeterRatio };
   }
 
   async update(updateFloorplanDto: UpdateFloorplanDto): Promise<Floorplan> {
