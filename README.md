@@ -26,3 +26,6 @@ Il funzionamento di alcuni metodi HTTP potrebbe non essere quello che ci si aspe
 - Nonostante il metodo PATCH serva, in teoria, solo per aggiornare una nuova risorsa, in pratica se usato riferendosi ad un entità già esistente non ancora esistente essa verrà creata
 
 Il sistema funziona in questo modo per evitare di aggiungere complessità non necessarie e seguire il funzionamento del database sottostante, si consiglia comunque di usare i metodi in modo idiomatico
+
+## Collegamenti utili
+- [Client per iOS](https://github.com/BortoAle/SpotITI)
