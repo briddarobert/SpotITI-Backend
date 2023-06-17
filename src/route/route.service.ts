@@ -122,7 +122,7 @@ export class RouteService {
         excludedNodes,
         excludedLinkTypes,
       );
-      if (!route || route.lenght < currentRoute.lenght) route = currentRoute;
+      if (!route || currentRoute.lenght < route.lenght) route = currentRoute;
     }
     if (!route) {
       throw RouteService.noPathFoundError;
